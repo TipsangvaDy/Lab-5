@@ -40,6 +40,7 @@ void LinkedList::insertFront(int value) {
     Node* p = new Node(value);
     p->next = head;
     head = p;
+    size++;
 }
 
 void LinkedList::insertBack(int value) {
@@ -47,16 +48,19 @@ void LinkedList::insertBack(int value) {
 
     if (head == nullptr) {
         head = p;
+        size++;
         return;
     }
 
     Node* cur = head;
+
     while (cur->next != nullptr) {
         cur = cur->next;
     }
-    cur->next = p;
-}
 
+    cur->next = p;
+    size++;
+}
 void LinkedList::print() {
     cout << "List: ";
     Node* cur = head;
@@ -77,31 +81,110 @@ LinkedList::~LinkedList() {
 }
 
 int LinkedList::getSize() const {
-    return 0;
+    return size;
 }
 
 bool LinkedList::isEmpty() const {
-    return true;
+    return head == nullptr;
 }
 
 bool LinkedList::search(int value) const {
+    Node* cur = head;
+
+    while (cur != nullptr) {
+        if (cur->data == value) {
+            return true;
+        }
+        cur = cur->next;
+    }
     return false;
 }
 
 bool LinkedList::getAt(int index, int& value) const {
+    if (index < 0 || index >= size) {
     return false;
+    }
+    Node* cur = head;
+
+    for (int i = 0; i < index; i++) {
+        cur = cur->next;
+    }
+    value = cur->data;
+    return true;
 }
 
 bool LinkedList::deleteFront() {
-    return false;
+    if (head == nullptr) {
+        return false;
+    }
+
+    Node* temp = head;
+    head = head->next;
+    delete temp;
+
+    size--;
+    return true;
 }
 
 bool LinkedList::deleteValue(int value) {
+    if (head == nullptr) {
+        return false;
+    }
+
+    if (head->data == value) {
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+
+        size--;
+        return true;
+    }
+
+    Node* cur = head;
+
+    while (cur->next != nullptr) {
+        if (cur->next->data == value) {
+            Node* temp = cur->next;
+            cur->next = cur->next->next;
+            delete temp;
+
+            size--;
+            return true;
+        }
+
+        cur = cur->next;
+    }
+
     return false;
 }
 
 bool LinkedList::insertAt(int index, int value) {
-    return false;
+    if (index < 0 || index > size) {
+        return false;
+    }
+
+    if (index == 0) {
+        insertFront(value);
+        return true;
+    }
+
+    if (index == size) {
+        insertBack(value);
+        return true;
+    }
+
+    Node* cur = head;
+
+    for (int i = 0; i < index - 1; i++) {
+        cur = cur->next;
+    }
+
+    Node* p = new Node(value);
+    p->next = cur->next;
+    cur->next = p;
+
+    size++;
+    return true;
 }
 
 int main() {
